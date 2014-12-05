@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         PluralsightUtil
-// @namespace    PluralsightUtil
+// @namespace    https://github.com/ByteBlast/
 // @version      0.1
 // @author       ByteB
 // @require      http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
