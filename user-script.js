@@ -16,14 +16,19 @@
       var durationWatched = moment.duration(0);
       $.get("http://www.pluralsight.com/data" + window.location.pathname, function(profile) {
           var courses = profile.usageInfo.completedCourses;
-          $.each(courses, function(index, course) {
-              $.get("http://www.pluralsight.com/data/course/" + course.courseName, function(course) {
-                  durationWatched.add(course.duration);
-                  if (index === courses.length - 1) {
-                      callback(durationWatched.asHours());
-                  }
+          
+          if (courses.length === 0) {
+              callback(0);
+          } else {
+              $.each(courses, function(index, course) {
+                  $.get("http://www.pluralsight.com/data/course/" + course.courseName, function(course) {
+                      durationWatched.add(course.duration);
+                      if (index === courses.length - 1) {
+                          callback(durationWatched.asHours().toFixed(2));
+                      }
+                  });
               });
-          });
+          }
       });
   }
 
