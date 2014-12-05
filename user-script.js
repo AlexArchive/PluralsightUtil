@@ -33,17 +33,17 @@
   }
 
   function onCalculateLinkClicked() {
-      $(".calculate-link").text("Calculating..");
+      $(".hours-watched .calculate-link").text("calculating..");
       tallyHoursWatched(function(hoursWatched) {
-          alert("You have watched " + hoursWatched + " hours of Pluralsight videos");
-          $(".calculate-link").text("Calculate hours-watched");
+          $(".hours-watched span").text(hoursWatched);
+          $(".hours-watched .calculate-link").remove();
       });
   }
 
   function onHeaderRendered(element) {
       element
           .next("ul")
-          .append("<li><a class=\"calculate-link\">Calculate hours-watched</a></li>");
+          .append("<li class=\"hours-watched\">Hours watched: <span></span><a class=\"calculate-link\">calculate</a></li>");
 
       $(".calculate-link").click(onCalculateLinkClicked);
   }
