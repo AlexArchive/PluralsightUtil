@@ -5,22 +5,39 @@
 // @author       ByteB
 // @require      http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js
 // @require      http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js
+// @require      https://gist.github.com/raw/2625891/waitForKeyElements.js
 // @include      *pluralsight.com/profile*
 // ==/UserScript==
 
-var totalDuration = moment.duration(0); 
-var profilePath = "http://www.pluralsight.com/data" + window.location.pathname;
+function tallyHoursWatched(callback) {
+    var totalDuration = moment.duration(0);
+    $.get("http://www.pluralsight.com/data" + window.location.pathname, function(profile) {
+        var courses = profile.usageInfo.completedCourses;
+        $.each(courses, function(index, course) {
+            $.get("http://www.pluralsight.com/data/course/" + course.courseName, function(course) {
+                totalDuration.add(course.duration);
+                if (index === courses.length - 1) {
+                    callback(totalDuration.asHours());
+                }
+            });
+        });
+    });
+}
 
-$.get(profilePath, function (profile) {
-    var courses = profile.usageInfo.completedCourses;
-    $.each(courses, function(index, course) {
-        var coursePath = "http://www.pluralsight.com/data/course/" + course.courseName;
-        $.get(coursePath, function (course) {
-			var courseDuration = course.duration;
-        	totalDuration.add(courseDuration); 
-      		if (index === courses.length - 1) {
-                console.log("Hours of Pluralsight content watched: " + totalDuration.asHours());
-            }
-    	});
-	});
-});
+function onCalculateLinkClicked() {
+    $(".calculate-link").text("Calculating..");
+    tallyHoursWatched(function(hoursWatched) {
+        alert("You have watched " + hoursWatched + " hours of Pluralsight videos");
+        $(".calculate-link").text("Calculate hours-watched");
+    });
+}
+
+function onHeaderRendered(element) {
+    element
+        .next("ul")
+        .append("<li><a class=\"calculate-link\">Calculate hours-watched</a></li>");
+
+    $(".calculate-link").click(onCalculateLinkClicked);
+}
+
+waitForKeyElements("h6:contains(\"More info\")", onHeaderRendered);
