@@ -10,14 +10,14 @@
 // ==/UserScript==
 
 function tallyHoursWatched(callback) {
-    var totalDuration = moment.duration(0);
+    var durationWatched = moment.duration(0);
     $.get("http://www.pluralsight.com/data" + window.location.pathname, function(profile) {
         var courses = profile.usageInfo.completedCourses;
         $.each(courses, function(index, course) {
             $.get("http://www.pluralsight.com/data/course/" + course.courseName, function(course) {
-                totalDuration.add(course.duration);
+                durationWatched.add(course.duration);
                 if (index === courses.length - 1) {
-                    callback(totalDuration.asHours());
+                    callback(durationWatched.asHours());
                 }
             });
         });
